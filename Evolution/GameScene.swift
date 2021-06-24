@@ -11,9 +11,19 @@ import GameplayKit
 class GameScene: SKScene {
     let goal = SKSpriteNode.init(color: .green, size: CGSize(width: 25, height: 25))
     let startingPos = CGPoint(x: 200, y: 80)
-    let population = Population.init(Size: 100, Position: CGPoint(x: 200, y: 80))
+    let population = Population.init(Size: 250, Position: CGPoint(x: 200, y: 80), Steps: 1000)
     var obstacles = Array<SKSpriteNode>()
+    let popSize = 250
+    let steps = 1000
+    var currentStep = 0
+    var gameState: State = .Reproducing
+    var statsLabel: SKLabelNode?
+    var generation = 0
+    let mutationChance = 2
+    
     override func sceneDidLoad() {
+        
+        statsLabel = childNode(withName: "statsLabel") as? SKLabelNode
         
         goal.position = CGPoint(x: 200, y: 640)
         addChild(goal)
@@ -31,18 +41,15 @@ class GameScene: SKScene {
         
         
         
-        population.createPositions(obstacles: obstacles)
+        population.createPositions(obstacles: obstacles, goal: goal)
         for i in population.players {
             addChild(i.node)
         }
+        gameState = .Running
         
     }
     
     override func didMove(to view: SKView) {
-        let bestPlayer = population.fittestPlayer(goal: goal.position)
-        population.reproduce(Parent: bestPlayer, Size: 100)
-        population.createPositions(obstacles: obstacles)
-        population.draw()
         
     }
     
@@ -56,8 +63,11 @@ class GameScene: SKScene {
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        
-        
+        if gameState == .Running {
+            gameState = .Background
+        } else if gameState == .Background{
+            gameState = .Running
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -76,21 +86,54 @@ class GameScene: SKScene {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
+    func regen() {
+        let initialState = gameState
+        gameState = .Reproducing
+        
+        for player in population.players {
+            player.node.removeFromParent()
+        }
+        
+        
+        let bestPlayer = population.fittestPlayer(goal: goal.position)
+        population.reproduce(Parent: bestPlayer, Size: popSize, MutationChance: mutationChance)
+        population.createPositions(obstacles: obstacles, goal: goal)
+        //print(population.players[0].positions.last)
+        
+        for i in population.players {
+            addChild(i.node)
+        }
+        
+        
+        currentStep = 0
+        generation += 1
+        
+        gameState = initialState
+    }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        population.draw()
-        for i in population.players {
-            i.node.removeFromParent()
-        }
-        /*
-        for i in children {
-            if (i.name ?? "").contains("player") {
-                i.removeFromParent()
+        //print(population.players[0].positions.last)
+        statsLabel?.text = "Generation: " + String(describing: generation)
+        
+        if gameState == .Running {
+            for player in population.players {
+                if currentStep < player.positions.count {
+                    player.node.position = player.positions[currentStep]
+                }
             }
-        }*/
-        for i in population.players {
-            //addChild(i.node)
+            if currentStep < steps {
+                currentStep += 1
+            } else {
+                regen()
+            }
+        } else if gameState == .Background {
+            regen()
         }
+        
+        
+        
+        
+        
     }
 }

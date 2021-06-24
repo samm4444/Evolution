@@ -14,9 +14,10 @@ class Player: NSObject {
     var positions: Array<CGPoint>
     var stepSize: CGFloat
     var alive: Bool
+    var won: Bool
     var node: SKSpriteNode
     
-    init(Steps: Int, i: Int) {
+    init(Steps: Int, ID: Int) {
         path = Array<Direction>()
         let r = GKRandomSource()
         for _ in 1...Steps { // create duplicate of parent
@@ -24,10 +25,11 @@ class Player: NSObject {
             path.append(direction)
         }
         positions = Array<CGPoint>() // not ran yet
-        stepSize = 2
+        stepSize = 4
         alive = true
+        won = false
         node = SKSpriteNode(color: .red, size: CGSize(width: 5, height: 5))
-        node.name = "player" + String(describing: i)
+        node.name = "player" + String(describing: ID)
     }
     
     
@@ -36,27 +38,34 @@ class Player: NSObject {
         var count = positions.count * 2
         var fitness: Float = 0
         
+        if won { // give winners a high score based on the number of steps taken to get there
+            return Float(( 1 / positions.count) + 100000)
+        }
         
-        if !alive {
-            return fitness
+        if !alive && !won { // give score of 0 if the player dies
+            return 0
         } else {
+            //fitness = 1 / Float(distance(positions.last!, goal))
+
+            
             for i in positions {
-                let distance = CGPointDistance(from: i, to: goal)
-                fitness += fitness * Float(distance)
+                let distance = distance(i, goal)
+                fitness += Float(count) * Float( 1 / distance)
                 count -= 1
             }
         }
         
         return fitness
     }
-
-    func CGPointDistance(from: CGPoint, to: CGPoint) -> CGFloat {
-        return sqrt((from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y))
+    func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+        let xDist = a.x - b.x
+        let yDist = a.y - b.y
+        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
-    
+
     // MARK: - Create an array of positions from the path
     
-    func createPositions(startPos: CGPoint, obstacles: Array<SKSpriteNode>) {
+    func createPositions(startPos: CGPoint, obstacles: Array<SKSpriteNode>, goal: SKSpriteNode) {
         var currentPos: CGPoint = startPos
         positions.append(currentPos)
         
@@ -80,6 +89,11 @@ class Player: NSObject {
                     break
             }
             
+            if goal.contains(currentPos) {
+                won = true
+                alive = false
+            }
+            
             // check for obstacle collision
             for o in obstacles {
                 if o.contains(currentPos) {
@@ -92,7 +106,7 @@ class Player: NSObject {
             }
             
             positions.append(currentPos) // add to list of places its been
-            node.position = currentPos
+            //node.position = currentPos
         }
         
         
@@ -103,11 +117,11 @@ class Player: NSObject {
     
     func mutate(Chance: Int) {
         let r = GKRandomSource()
-        let n = r.nextInt(upperBound: 100)
         let oldPath = path
         path = Array<Direction>()
         for d in oldPath {
-            if n > Chance {
+            let n = r.nextInt(upperBound: 100)
+            if n < Chance {
                 let direction = Direction(rawValue: r.nextInt(upperBound: 4))!
                 path.append(direction)
             } else {
@@ -115,14 +129,8 @@ class Player: NSObject {
             }
         }
         
-        
     }
     
-    func draw() {
-        for i in positions {
-            node.position = i
-        }
-        
-    }
+    
     
 }
