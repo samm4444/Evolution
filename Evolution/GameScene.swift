@@ -17,13 +17,22 @@ class GameScene: SKScene {
     let steps = 1000
     var currentStep = 0
     var gameState: State = .Reproducing
-    var statsLabel: SKLabelNode?
     var generation = 0
     let mutationChance = 2
+    var skipTo = 0
+    var skippingNo = 0
+    
+    func skip(generations: Int) {
+        skipTo = generation + generations
+        skippingNo = generations
+        gameState = .Background
+    }
+    
+    var setProgress:((Float) -> (Void))?
+    var setGeneration:((Int) -> (Void))?
     
     override func sceneDidLoad() {
         
-        statsLabel = childNode(withName: "statsLabel") as? SKLabelNode
         
         goal.position = CGPoint(x: 200, y: 640)
         addChild(goal)
@@ -63,11 +72,12 @@ class GameScene: SKScene {
     }
     
     func touchUp(atPoint pos : CGPoint) {
+        /*
         if gameState == .Running {
             gameState = .Background
         } else if gameState == .Background{
             gameState = .Running
-        }
+        }*/
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -109,12 +119,29 @@ class GameScene: SKScene {
         generation += 1
         
         gameState = initialState
+        
+        if gameState == .Running {
+            setProgress?(0)
+        }
+        
+        if gameState == .Background {
+            
+            let percentage: Float = 1 - Float((Float(skipTo - generation)) / Float(skippingNo))
+            setProgress?(percentage)
+            
+            if generation == skipTo {
+                gameState = .Running
+            }
+            
+        }
+        
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         //print(population.players[0].positions.last)
-        statsLabel?.text = "Generation: " + String(describing: generation)
+        setGeneration?(generation)
         
         if gameState == .Running {
             for player in population.players {

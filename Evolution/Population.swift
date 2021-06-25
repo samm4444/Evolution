@@ -50,7 +50,7 @@ class Population: NSObject {
         for i in fittnesses {
             sum += i.value
         }
-        print(String(describing: generation) + "," + String(describing: (sum / Float(fittnesses.count))) )
+        //print(String(describing: generation) + "," + String(describing: (sum / Float(fittnesses.count))) )
         
         return sorted[0].key // return the player with the highest fitness rating
     }

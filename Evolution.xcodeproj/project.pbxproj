@@ -19,6 +19,7 @@
 		224E42FF267BE7D400EC9564 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224E42FE267BE7D400EC9564 /* Player.swift */; };
 		224E4303267BEA5400EC9564 /* Population.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224E4302267BEA5400EC9564 /* Population.swift */; };
 		224E4305267BF44300EC9564 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224E4304267BF44300EC9564 /* Direction.swift */; };
+		22EC6B522685F86D00E017CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22EC6B512685F86D00E017CE /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		224E42FE267BE7D400EC9564 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		224E4302267BEA5400EC9564 /* Population.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Population.swift; sourceTree = "<group>"; };
 		224E4304267BF44300EC9564 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		22EC6B512685F86D00E017CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 				2202B40626839E9A006CC7E5 /* State.swift */,
 				224E42D3267BCC8D00EC9564 /* GameViewController.swift */,
 				224E42D5267BCC8D00EC9564 /* Main.storyboard */,
+				22EC6B512685F86D00E017CE /* Launch Screen.storyboard */,
 				224E42D8267BCC8E00EC9564 /* Assets.xcassets */,
 				224E42DA267BCC8E00EC9564 /* Info.plist */,
 			);
@@ -245,6 +248,7 @@
 			files = (
 				224E42D7267BCC8D00EC9564 /* Main.storyboard in Resources */,
 				224E42CE267BCC8D00EC9564 /* GameScene.sks in Resources */,
+				22EC6B522685F86D00E017CE /* Launch Screen.storyboard in Resources */,
 				224E42D9267BCC8E00EC9564 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
