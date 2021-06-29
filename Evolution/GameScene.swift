@@ -18,7 +18,7 @@ class GameScene: SKScene {
     var currentStep = 0
     var gameState: State = .Reproducing
     var generation = 0
-    let mutationChance = 2
+    let mutationChance = 3
     var skipTo = 0
     var skippingNo = 0
     
